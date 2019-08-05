@@ -1,0 +1,6 @@
+sensor:
+  - platform: atlas_scientific
+    port: /dev/ttyAMA0
+#   port: /dev/ttyUSB0
+    scan_interval: 300
+    
