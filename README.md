@@ -1,7 +1,7 @@
-# raspool
+# raspipool
 Pool Automation Systen with Raspberry Pi + Home Assistant
 Goal:
-Build a cost-effective easy-to-install easy-to-use automation system with basic functions for most of little-medium pools.
+Build a cost-effective, easy-to-install, easy-to-use Pool Automation System with basic functions for most of little-medium pools.
 
 - Filter control (fixed and dual-speed pump)
 - 3 sensors:
