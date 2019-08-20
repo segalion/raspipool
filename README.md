@@ -18,9 +18,9 @@ Build a cost-effective, easy-to-install, easy-to-use "Swimming-Pool Automation S
  System is intended to automagically control basic functions and notification all possible events.
  
  ## Install
- 1. Just copy 'custom_components' and 'packages' folders in homeassistant config dir (/home/homeassistant/.homeassistant) with all paths and contents.
- 2. Modify your onfiguration.yaml (including '  packages: !include_dir_named packages', disabling automations and discovery and lovelace in yaml mode) as example in code
- 3. Create proper secrets.yaml for apis (latitude/longitude, pushbullet api, openweathermap api, etc).
+ 1. Just copy 'custom_components', 'packages' folders (with all paths and contents) and 'ui-lovelace.yaml' frontend file in homeassistant conf_dir ( i.e. /home/homeassistant/.homeassistant/ ).
+ 2. Modify your 'configuration.yaml' (including '  packages: !include_dir_named packages', disabling automations and discovery and lovelace in yaml mode) as example in code
+ 3. Create/modify proper 'secrets.yaml' for apis (latitude/longitude, pushbullet api, openweathermap api, etc).
  
  
  ## TODO:
