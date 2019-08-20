@@ -1,0 +1,314 @@
+title: Raspipool
+views:
+  - badges:
+      - sensor.exterior_temperature
+      - sensor.e_fc
+      - sensor.cycle_pool
+      - sensor.exterior_condition
+    title: Pool
+    panel: false
+    icon: 'mdi:pool'
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - max: 35
+                min: 22
+                theme: Backend-selected
+                entity: sensor.pool_water_temperature
+                severity:
+                  green: 27
+                  red: 33
+                  yellow: 31
+                name: temp
+                type: gauge
+              - max: 8
+                min: 6.5
+                theme: Backend-selected
+                entity: sensor.ph_mean
+                severity:
+                  green: 6.95
+                  red: 7.75
+                  yellow: 7.35
+                name: ph
+                type: gauge
+              - max: 1999
+                min: -1999
+                theme: Backend-selected
+                entity: sensor.orp_mean
+                severity:
+                  green: 650
+                  red: 800
+                  yellow: 600
+                name: orp
+                type: gauge
+          - show_name: false
+            entities:
+              - entity: sensor.pool_water_temperature
+                hold_action:
+                  action: call-service
+                  service: homeassistant.update_entity
+                  service_data:
+                    entity_id: sensor.pool_water_temperature
+              - entity: sensor.ezo_ph
+                hold_action:
+                  action: call-service
+                  service: homeassistant.update_entity
+                  service_data:
+                    entity_id: sensor.ezo_ph
+              - entity: sensor.ezo_orp
+                hold_action:
+                  action: call-service
+                  service: homeassistant.update_entity
+                  service_data:
+                    entity_id: sensor.ezo_orp
+            type: glance
+            show_state: true
+          - title: prueba
+            type: horizontal-stack
+            cards:
+              - max: 20
+                min: 0
+                theme: default
+                entity: sensor.remain_cycles
+                severity:
+                  green: 15
+                  red: 5
+                  yellow: 10
+                name: remain cycles
+                type: gauge
+              - max: 10
+                min: 0
+                theme: default
+                entity: sensor.muriatic_tank
+                severity:
+                  green: 5
+                  red: 1
+                  yellow: 3
+                type: gauge
+              - max: 15
+                min: 0
+                theme: default
+                entity: sensor.bleach_tank
+                severity:
+                  green: 8
+                  red: 0
+                  yellow: 3
+                type: gauge
+          - show_name: true
+            entities:
+              - entity: switch.pump
+                hold_action:
+                  action: toggle
+              - entity: switch.turbo
+                hold_action:
+                  action: toggle
+              - entity: binary_sensor.muriatic
+                hold_action:
+                  action: call-service
+                  service: switch.toggle
+                  service_data:
+                    entity_id: switch.ph
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace/2
+              - entity: binary_sensor.bleach
+                hold_action:
+                  action: call-service
+                  service: switch.toggle
+                  service_data:
+                    entity_id: switch.orp
+                tap_action:
+                  action: navigate
+                  navigation_path: /lovelace/2
+            type: glance
+            show_state: false
+            show_icon: true
+  - badges: []
+    title: History
+    panel: true
+    icon: 'mdi:chart-line'
+    cards:
+      - type: horizontal-stack
+        cards:
+          - title: last 3 hours
+            entities:
+              - entity: sensor.pump_state
+              - entity: switch.orp
+                name: Bleach inj.
+              - entity: switch.ph
+                name: Muriatic inj.
+              - entity: sensor.ph_mean
+                name: pH
+              - entity: sensor.orp_mean
+                name: ORP
+              - entity: sensor.pool_water_temperature
+                name: water temp.
+            type: history-graph
+            hours_to_show: 3
+          - title: last 3 days
+            entities:
+              - entity: sensor.pump_state
+              - entity: switch.orp
+                name: Bleach inj.
+              - entity: switch.ph
+                name: Muriatic inj.
+              - entity: sensor.ph_mean
+                name: pH
+              - entity: sensor.orp_mean
+                name: ORP
+              - entity: sensor.pool_water_temperature
+                name: water temp.
+            type: history-graph
+            hours_to_show: 72
+  - badges: []
+    title: Chemical
+    panel: true
+    icon: 'mdi:flask'
+    cards:
+      - type: horizontal-stack
+        cards:
+          - entities:
+              - label: Muriatic ( - pH )
+                type: section
+              - entity: input_number.muriatic_tank
+                name: Tank level
+              - entity: input_number.muriatic_concentration
+                name: Concentration
+              - entity: input_number.muriatic_speed
+                name: Speed injection
+              - entity: switch.ph
+                name: Pump injection
+                secondary_info: last-changed
+              - entity: input_boolean.lock_muriatic
+                name: Lock Pump
+            type: entities
+            show_header_toggle: false
+          - entities:
+              - label: Bleach ( + ORP )
+                type: section
+              - entity: input_number.bleach_tank
+                name: Tank level
+              - entity: input_number.bleach_concentration
+                name: Concentration
+              - entity: input_number.bleach_speed
+                name: Speed injection
+              - entity: switch.orp
+                name: Pump injection
+                secondary_info: last-changed
+              - entity: input_boolean.lock_bleach
+                name: Lock Pump
+            type: entities
+            show_header_toggle: false
+  - badges: []
+    path: default_view
+    icon: 'mdi:message-alert'
+    title: Alerts
+    cards:
+      - title: Notifications
+        entities:
+          - entity: input_number.notify_cycles
+          - entity: input_boolean.notify_seasson
+          - entity: input_number.notify_muriatic_high
+          - entity: input_number.notify_muriatic_tank
+          - entity: input_number.notify_bleach_tank
+          - entity: input_number.notify_bleach_high
+        type: entities
+        show_header_toggle: true
+  - badges: []
+    title: Settings
+    icon: 'mdi:tune'
+    cards:
+      - title: Pool Settings
+        entities:
+          - label: Pool
+            type: section
+          - entity: input_number.capacity
+            name: Capacity
+          - entity: input_number.quality
+            name: Quality
+          - entity: input_datetime.recirculation
+            name: Turnover rate
+          - entity: input_boolean.turbo
+          - entity: input_number.turbo
+          - label: Filter
+            type: section
+          - entity: input_datetime.cycle_start
+          - entity: input_number.second_cycle
+          - entity: sensor.cycle_pool
+          - entity: input_number.cycle
+        type: entities
+        show_header_toggle: false
+        theme: default
+      - title: Chemical settings
+        entities:
+          - label: Free Chlorine (FC)
+            type: section
+          - entity: input_number.fc_target
+            name: FC target
+          - entity: sensor.e_fc
+            name: FC actual
+          - entity: input_number.bleach_inject
+            name: Next bleach injection (ml)
+          - entity: input_number.e_fc_adjust
+            name: Adjust ±% FC-ORP
+          - label: pH
+            type: section
+          - entity: input_number.ph_target
+            name: pH target
+          - entity: sensor.ph_mean
+            name: pH actual
+          - entity: input_number.muriatic_inject
+            name: Next muriatic injection (ml)
+        type: entities
+        show_header_toggle: false
+  - badges:
+      - sun.sun
+      - sensor.time
+      - sensor.cycle_pool
+      - input_number.out_of_order
+    title: Advanced
+    icon: 'mdi:settings'
+    cards:
+      - type: horizontal-stack
+        cards:
+          - icon_height: 64px
+            type: entity-button
+            tap_action:
+              action: none
+            entity: input_number.out_of_order
+            show_name: true
+            name: Maintenance
+            show_icon: true
+            hold_action:
+              action: more-info
+          - icon_height: 64px
+            type: entity-button
+            tap_action:
+              action: more-info
+            entity: input_datetime.cummulated_flow_start
+            show_name: true
+            name: Reset Cumm. Flow
+            show_icon: true
+            hold_action:
+              action: call-service
+              service: automation.trigger
+              service_data:
+                entity_id: automation.reset_cummulated_flow_start
+          - icon_height: 64px
+            type: entity-button
+            tap_action:
+              action: none
+            entity: input_number.pump_on_for
+            show_name: true
+            name: Filter for ...
+            show_icon: true
+            hold_action:
+              action: more-info
+      - entities:
+          - entity: input_datetime.cummulated_flow_start
+          - entity: sensor.cummulated_flow_high
+          - entity: sensor.cummulated_flow_low
+        type: entities
+        
