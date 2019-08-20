@@ -1,4 +1,8 @@
-#from homeassistant.const import TEMP_CELSIUS
+# Under MIT licence
+# Release 0.1 (06/08/2019) by segalion at gmail
+# ORP & pH tested. DO & EC from datasheets, so possible errors like ORP/OR
+
+
 import logging
 import serial
 from homeassistant.helpers.entity import Entity
@@ -7,11 +11,7 @@ from homeassistant.const import (
 from homeassistant.components.sensor import PLATFORM_SCHEMA
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv
-
-
-# turn on the LEDs
-# ser.write("L,1\r")
-# ser.write("C,0\r")
+#from homeassistant.const import TEMP_CELSIUS
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -36,21 +36,37 @@ class AtlasSensor(Entity):
 
     def __init__(self, name, port):
         """Initialize the sensor."""
-        self.ser = serial.Serial(port, 9600)
-        _LOGGER.info("Serial for Atlas @%s = %s  " % (port,self.ser))
+        self.ser = serial.Serial(port, 9600, timeout=3, write_timeout=3)
+        _LOGGER.info("Serial for Atlas EZO @%s = %s" % (port,self.ser))
         self._state = None
         self._name = name
         ezos = {"ph": ['ph', 'pH', 'mdi:alpha-h-circle'],
                "orp": ['orp', 'mV', 'mdi:alpha-r-circle'],
+               "or": ['orp', 'mV', 'mdi:alpha-r-circle'],
+               "do": ['dissolved_oxygen','mV', 'mdi:alpha-x-circle'],
                "d.o.": ['dissolved_oxygen','mV', 'mdi:alpha-x-circle'],
                "ec": ['conductivity', "EC", 'mdi:alpha-c-circle']}
-        ezo = self._read("I").lower().split(',')
-        if len(ezo)>2 and ezo[1] in ezos:
-            self._ezo_dev = ezos[ezo[1]][0]
-            self._ezo_uom = ezos[ezo[1]][1]
-            self._ezo_icon = ezos[ezo[1]][2]
-            _LOGGER.info("Atlas %s detected " % self._ezo_dev)
-            self._name += ("_" + self._ezo_dev) 
+        # Reset buffer
+        self._read("")
+        # Get Status
+        status = self._read("Status")
+        # Set response ON
+        ok = self._read("*OK,1")
+        ok += self._read("RESPONSE,1")
+        # Set continuos  mode OFF
+        c = self._read("C,0")
+        # Get kind of EZO
+        for i in range(5):
+            ezo = self._read("I")
+            if ezo is not None:
+                ezo = ezo.lower().split(',')
+                if len(ezo)>2 and ezo[1] in ezos:
+                    self._ezo_dev = ezos[ezo[1]][0]
+                    self._ezo_uom = ezos[ezo[1]][1]
+                    self._ezo_icon = ezos[ezo[1]][2]
+                    self._name += ("_" + self._ezo_dev)
+                    break
+        _LOGGER.info("Atlas EZO '%s' detected [Status=%s, Ok=%s, c=%s]", ezo,status,ok,c)
 
     @property
     def name(self):
@@ -83,8 +99,8 @@ class AtlasSensor(Entity):
         line = ""
         for i in range(50):
             line += self.ser.read().decode()
-            if line[0]=="*" and line[-1]=="\r": break
-            if terminator in line: return line.replace(terminator,"")
+            if ( line[0]=="*" and line[-1]=="\r") or terminator in line: break
+        return line.replace(terminator,"")
 
     def update(self):
         """Fetch new state data for the sensor.
