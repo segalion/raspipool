@@ -1,5 +1,5 @@
 # raspipool
-Pool Automation Systen with Raspberry Pi + Home Assistant
+Swimming-Pool Automation Systen with Raspberry Pi + Home Assistant
 
 Goal:
 
@@ -14,6 +14,8 @@ Build a cost-effective, easy-to-install, easy-to-use "Swimming-Pool Automation S
   - pump speed (high/low)
   - muriatic injection (to reduce pH)
   - bleach injection
+ 
+ System is intended to automagically control basic functions and notification all possible events.
  
  TODO:
  - External sensor to measure power consumption and safe motor (https://en.wikipedia.org/wiki/Magnetic_starter) (probably based on sonoff POW)
