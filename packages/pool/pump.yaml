@@ -1,0 +1,221 @@
+sensor:
+  - platform: template
+    sensors:
+      cycle_pool:
+        friendly_name: "Next Cycle pump"
+        value_template: >-
+          {% if is_state('sensor.pool_temp','unknown') %}
+            {% set temp = states('sensor.pool_water_temperature')|float %}
+          {%- else -%}
+            {% set temp = states('sensor.pool_temp')|float %}
+          {%- endif -%}
+          {{ ( state_attr('input_datetime.recirculation','timestamp')|float *
+            ( 1 - is_state('input_boolean.turbo','on')|int * states('input_number.turbo')|float * 2 / 300 ) *
+            ( temp / [1, ( 9 - temp / 2)]|max ) /
+            ( states('input_number.quality')|float + 6 ) )|round(0) | timestamp_custom('%H:%M', false) }}
+        entity_id:
+        - sensor.pool_temp
+        - sensor.pool_water_temperature
+        - input_number.cycle
+        - input_number.quality
+        icon_template: >-
+          {% if states('input_number.cycle')|int < 0 %}
+            mdi:water-off
+          {% elif states('input_number.cycle')|int < 240 %}
+            mdi:weather-snowy
+          {% elif states('input_number.cycle')|int >= 1440 %}
+            mdi:numeric-{{ (states('input_number.cycle')|int / 1440)|int }}-box-multiple-outline
+          {% else %}
+            mdi:weather-sunny
+          {% endif %}
+
+
+input_number:
+  out_of_order:
+    min: -1
+    max: 10
+    unit_of_measurement: 'days'
+    icon: mdi:engine-off
+  cycle:
+    min: -10
+    max: 14400
+    unit_of_measurement: 'minutes'
+    mode: box
+  second_cycle:
+    min: 0
+    max: 50
+    step: 5
+    unit_of_measurement: '%'
+    icon: mdi:replay
+  pump_on_for:
+    min: 0
+    max: 10
+    step: 0.25
+    unit_of_measurement: 'hours'
+    icon: mdi:engine
+
+
+automation:
+- alias: cycle_start
+  id: '1559137717424'
+  initial_state: true
+  trigger:
+  - platform: template
+    value_template: "{{ states.sensor.time.state == (states.input_datetime.cycle_start.attributes.timestamp
+      | int | timestamp_custom('%H:%M', False)) }}"
+  condition: []
+  action:
+  - service: input_number.set_value
+    data_template:
+      entity_id: input_number.out_of_order
+      value: "{{ states('input_number.out_of_order')|int - 1 }}"
+  - condition: numeric_state
+    entity_id: input_number.out_of_order
+    below: 0
+  - service: input_number.set_value
+    data_template:
+      entity_id: input_number.cycle
+      value: "{% set lmins = states('input_number.cycle')|int %} {%- if lmins <
+        0 -%} {{ lmins + 1 }} {%- else -%} {% set mins = strptime(states('sensor.cycle_pool'),'%H:%M').hour
+        * 60 + strptime(states('sensor.cycle_pool'),'%H:%M').minute %} {%- if
+        lmins < 240 -%} {{ mins + lmins }} {%- elif lmins < 1440 -%} {{ mins }} {%- else -%} {{ lmins }} {%- endif -%} 
+{%- endif -%}"
+  - condition: numeric_state
+    entity_id: input_number.cycle
+    above: 239
+  - service: automation.trigger
+    entity_id: automation.cycle_pump_start
+  - condition: numeric_state
+    entity_id: input_number.cycle
+    below: 1440
+  - delay: 00:00:10
+  - service: automation.trigger
+    entity_id: automation.cycle_turbo_start
+  - condition: numeric_state
+    entity_id: input_number.second_cycle
+    above: 0
+  - delay: 00:{{720 + (states('input_number.cycle')|int * (100 - states('input_number.second_cycle')|int)/200)|int }}:00
+
+- alias: cycle_pump_start
+  id: '1559293900608'
+  trigger: []
+  condition: []
+  action:
+  - entity_id: switch.pump
+    service: switch.turn_on
+  - entity_id: automation.ph_bad
+    service: automation.turn_on
+  - entity_id: automation.orp_bad
+    service: automation.turn_on
+  - delay: 00:15:00
+  - service: automation.trigger
+    entity_id: automation.bleach_set
+  - delay: 00:5:00
+  - service: automation.trigger
+    entity_id: automation.muriatic_set
+  - delay: 00:{{ [1440 , (states('input_number.cycle')|int * (1 - states('input_number.second_cycle')|int/100))|int]|min }}:00
+  - entity_id: switch.pump
+    service: switch.turn_off
+  - condition: numeric_state
+    entity_id: input_number.cycle
+    above: 1439
+  - service: input_number.set_value
+    data_template:
+      entity_id: input_number.cycle
+      value: "{{ states('input_number.cycle')|int - 1440 }}"
+
+- alias: cycle_turbo_start
+  id: '1559223936600'
+  trigger: []
+  condition: []
+  action:
+  - condition: state
+    entity_id: input_boolean.turbo
+    state: 'on'
+  - condition: numeric_state
+    entity_id: input_number.turbo
+    above: '0'
+  - entity_id: switch.turbo
+    service: switch.turn_off
+  - delay: 00:{{ (states('input_number.cycle')|int * (1 - states('input_number.second_cycle')|int/100) * (1 - states('input_number.turbo')|int /100) /2 )|int }}:00
+  - entity_id: switch.turbo
+    service: switch.turn_on
+  - delay: 00:{{ (states('input_number.cycle')|int * (1 - states('input_number.second_cycle')|int/100) * states('input_number.turbo')|int /100 )|int }}:00
+  - entity_id: switch.turbo
+    service: switch.turn_off
+  initial_state: true
+
+- alias: pump_start
+  id: '1559049859754'
+  initial_state: true
+  trigger:
+  - platform: state
+    entity_id: switch.pump
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: input_boolean.turbo
+    state: 'on'
+  - condition: state
+    entity_id: switch.turbo
+    state: 'off'
+  action:
+  - service: switch.turn_on
+    entity_id: switch.turbo
+  - delay: 00:00:02
+  - service: switch.turn_off
+    entity_id: switch.turbo
+
+- alias: pump_stop
+  id: '1559449855764'
+  initial_state: true
+  trigger:
+  - platform: state
+    entity_id: switch.pump
+    to: 'off'
+  condition: []
+  action:
+  - service: switch.turn_off
+    entity_id: switch.ph
+  - service: switch.turn_off
+    entity_id: switch.orp
+
+- alias: every_2_min
+  id: '1554168816425'
+  initial_state: true
+  trigger:
+  - platform: time_pattern
+    minutes: '/2'
+  condition:
+  - condition: state
+    entity_id: switch.pump
+    state: 'on'
+    for:
+      minutes: 5
+  action:
+  - service: homeassistant.update_entity
+    entity_id: sensor.ezo_ph
+  - service: homeassistant.update_entity
+    entity_id: sensor.pool_water_temperature
+  - service: homeassistant.update_entity
+    entity_id: sensor.ezo_orp
+
+
+- alias: pump_on_for
+  id: '1549429855765'
+  initial_state: true
+  trigger:
+  - platform: numeric_state
+    entity_id: input_number.pump_on_for
+    above: '0'
+  condition: []
+  action:
+  - service: switch.turn_on
+    entity_id: switch.pump
+  - delay: "{{states('input_number.pump_on_for')|int}}:{{((states('input_number.pump_on_for')|float % 1)*60)|int}}:0"
+  - service: switch.turn_off
+    entity_id: switch.pump
+  - service: input_number.set_value
+    data:
+      entity_id: input_number.pump_on_for
+      value: '0'
