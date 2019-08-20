@@ -3,7 +3,7 @@ Pool Automation Systen with Raspberry Pi + Home Assistant
 
 Goal:
 
-Build a cost-effective, easy-to-install, easy-to-use "Pool Automation System" with basic functions for most of little-medium pools.
+Build a cost-effective, easy-to-install, easy-to-use "Swimming-Pool Automation System" with basic functions for most of small-medium size pools.
 
 - Filter control (fixed and dual-speed pump)
 - 3 sensors:
@@ -13,8 +13,9 @@ Build a cost-effective, easy-to-install, easy-to-use "Pool Automation System" wi
   - pump on/off
   - pump speed (high/low)
   - muriatic injection (to reduce pH)
-  - bleach injection / SWC – Salt Water Chlorinator
+  - bleach injection
  
  TODO:
- - External sensor to measure power consumption (probably based on sonoff POW)
+ - External sensor to measure power consumption and safe motor (https://en.wikipedia.org/wiki/Magnetic_starter) (probably based on sonoff POW)
  - Integrate mega-io board (relays and ACD)
+ - SWC – Salt Water Chlorinator 
