@@ -1,6 +1,8 @@
 # raspipool
-Swimming-Pool Automation Systen with Raspberry Pi + Home Assistant
+**Swimming-Pool Automation Systen with Raspberry Pi + Home Assistant**
+
 ![](https://raw.githubusercontent.com/segalion/raspipool/master/help/media/raspipool_main2.png)
+
 ## Goal:
 
 Build a cost-effective, easy-to-install, easy-to-use "Swimming-Pool Automation System" with basic functions for most of small-medium size pools.
