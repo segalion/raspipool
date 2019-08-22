@@ -1,7 +1,8 @@
 # raspipool
 **Swimming-Pool Automation Systen with Raspberry Pi + Home Assistant**
 
-![](https://raw.githubusercontent.com/segalion/raspipool/master/help/media/raspipool_main2.png)
+<img src="https://raw.githubusercontent.com/segalion/raspipool/master/help/media/raspipool_main2.png" height="100">
+![](https://raw.githubusercontent.com/segalion/raspipool/master/help/media/raspipool_main2.png | width=100)
 
 ## Goal:
 
