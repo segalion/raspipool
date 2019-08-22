@@ -24,5 +24,9 @@ Build a cost-effective, easy-to-install, easy-to-use "Swimming-Pool Automation S
  
  ## TODO:
  - External sensor to measure power consumption and [safe motor](https://en.wikipedia.org/wiki/Magnetic_starter) (probably based on sonoff POW)
- - Integrate mega-io board (relays and ACD with )
+ - Integrate [mega-io board](https://www.sequentmicrosystems.com/megaio.html) (relays and ACD with i2c control)
  - SWC – Salt Water Chlorinator 
+ 
+ 
+ 
+ <sub>Thanks to Hidromaster, Piscidoc and all DIY enthusiasts from [hablemosdepisicnas](http://www.hablemosdepiscinas.com/foro/viewtopic.php?f=11&t=3906) and [TFP](https://www.troublefreepool.com/threads/raspipool-pool-automation-system-with-raspberry-pi-home-assistant.188410/) forums.</sub>
