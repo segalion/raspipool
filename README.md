@@ -19,7 +19,7 @@ Build a cost-effective, easy-to-install, easy-to-use "Swimming-Pool Automation S
  
  ## Build system:
  
- Follow instructions in [wiki](/wiki/) [howto connect sensors](/wiki/Sensors-connection-(DS18B20,-and-EZO-pH-and-ORP)) and [howto connect pump relays](/wiki/Connection-of-relays-for-pump-control)
+ Follow instructions in wiki [howto connect sensors](https://github.com/segalion/raspipool/wiki/Sensors-connection-(DS18B20,-and-EZO-pH-and-ORP)) and [howto connect pump relays](https://github.com/segalion/raspipool/wiki/Connection-of-relays-for-pump-control)
  
  ## Install
  0. Install raspbian and Home Assistant ([prefered method](https://www.home-assistant.io/docs/installation/raspberry-pi/) as I use it now) (or HASS.IO)
