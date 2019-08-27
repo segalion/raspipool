@@ -1,0 +1,45 @@
+sensor:
+  - platform: statistics
+    name: orp
+    entity_id: sensor.ezo_orp
+    max_age:
+      minutes: 10
+    precision: 0
+
+  - platform: atlas_scientific
+    port: /dev/ttyUSB0
+    offset: 78
+    scan_interval: 31536000
+
+automation:
+- alias: orp_start
+  id: '1559639825764'
+  initial_state: true
+  trigger:
+  - platform: state
+    entity_id: switch.orp
+    to: 'on'
+  condition:
+  - condition: state
+    entity_id: switch.pump
+    state: 'off'
+  action:
+  - service: switch.turn_off
+    entity_id: switch.orp
+
+- alias: orp_bad
+  id: '1559149493756'
+  initial_state: true
+  trigger:
+  - platform: template
+    value_template: '{{state_attr("sensor.orp_mean", "standard_deviation") > 20 }}'
+  condition: []
+  action:
+  - service: notify.pushbullet
+    data_template:
+      message: 'Between {{state_attr("sensor.orp_mean", "min_value")}} and {{state_attr("sensor.orp_mean", "max_value")}}{{- "\n\n" -}}@{{now().strftime("%H:%M")}}[{{now().day}}/{{now().month}}]'
+      title: 'ORP probe bad (calibrate?) !!!'
+  - service: automation.turn_off
+    entity_id: automation.orp_bad
+
+

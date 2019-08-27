@@ -1,0 +1,88 @@
+sensor:
+  - platform: template
+    sensors:
+      pump_state:
+        friendly_name: "Pump State"
+        value_template: >-
+          {% if is_state('switch.pump', 'on') %}
+             {% if is_state('switch.turbo', 'on') %}
+                high
+             {% else %}
+                low
+             {% endif %}
+          {% else %}
+             None
+          {% endif %}
+
+      remain_cycles:
+        friendly_name: "Remain cycles"
+        value_template: >-
+          {% set nextcycle = strptime(states('sensor.cycle_pool'),'%H:%M').hour + strptime(states('sensor.cycle_pool'),'%H:%M').minute|int/60 %} 
+          {{(states('input_number.notify_cycles')|float - (states('sensor.cummulated_flow_low')|float + states('sensor.cummulated_flow_high')|float * 5) / (state_attr('input_datetime.recirculation','hour')+ state_attr('input_datetime.recirculation','minute')|float/60) )|round(1)}}
+        unit_of_measurement: ''
+        entity_id: 
+        - input_number.notify_cycles
+        - sensor.cummulated_flow_low
+        - sensor.cummulated_flow_high
+  
+  - platform: history_stats
+    name: cummulated_flow_low
+    entity_id: sensor.pump_state
+    state: 'low'
+    type: time
+    start: "{{ state_attr('input_datetime.cummulated_flow_start','timestamp') }}"
+    end: "{{ now() }}"
+
+  - platform: history_stats
+    name: cummulated_flow_high
+    entity_id: sensor.pump_state
+    state: 'high'
+    type: time
+    start: "{{ state_attr('input_datetime.cummulated_flow_start','timestamp') }}"
+    end: "{{ now() }}"
+
+input_datetime:
+  cummulated_flow_start:
+    name: Cummulated Flow Start
+    has_date: true
+    has_time: true
+    icon: mdi:timer
+
+input_number:
+  notify_cycles:
+    name: Notify cycles flow
+    icon: mdi:timer
+    min: 0
+    max: 100
+    step: 5
+
+automation:
+- alias: notify_cummulated_flow
+  id: '1559049859380'
+  initial_state: true
+  trigger:
+  - platform: numeric_state
+    entity_id: sensor.remain_cycles
+    below: 1
+  condition:
+  - condition: numeric_state
+    entity_id: input_number.notify_cycles
+    above: 0
+  action:
+  - data_template:
+      message: "in low speed: {{state_attr('sensor.cummulated_flow_low','value')}}{{'\n'}}in high speed: {{state_attr('sensor.cummulated_flow_high','value')}}{{'\n'}}@{{now().strftime('%H:%M')}}[{{now().day}}/{{now().month}}]"
+      title: "Flow: {{states('input_number.notify_cycles')|int}} cycles reached!!!"
+    service: notify.pushbullet
+
+- alias: reset_cummulated_flow_start
+  id: '1559293506609'
+  trigger: []
+  condition: []
+  action:
+  - service: input_datetime.set_datetime
+    data_template:
+      entity_id: input_datetime.cummulated_flow_start
+      date: "{{now().timestamp()|timestamp_custom('%Y-%m-%d', True)}}"
+      time: "{{now().timestamp()|timestamp_custom('%H:%M:%S', True)}}"
+
+
