@@ -1,9 +1,0 @@
-frontend:
-  themes:
-    danger:
-      primary-color: red
-    maintenance:
-      primary-color: grey
-    algae:
-      primary-color: green
-
