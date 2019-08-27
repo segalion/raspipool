@@ -14,32 +14,32 @@ import homeassistant.helpers.config_validation as cv
 #from homeassistant.const import TEMP_CELSIUS
 
 _LOGGER = logging.getLogger(__name__)
-
+CONF_OFFSET = 'offset'
 # Validation of the user's configuration
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend({
     vol.Required(CONF_PORT): cv.string,
-    vol.Optional(CONF_NAME, default='ezo'): cv.string
+    vol.Optional(CONF_NAME, default='ezo'): cv.string,
+    vol.Optional(CONF_OFFSET, default=0.0): vol.Coerce(float)
 })
 
 def setup_platform(hass, config, add_devices, discovery_info=None):
     """Setup the sensor platform."""
-    port=config.get(CONF_PORT)
-    name=config.get(CONF_NAME)
-    #add_entities([[AtlasSensor(
-    #    name=config.get(CONF_NAME),
-    #    port=config.get(CONF_PORT)
-    #)])
-    add_devices([AtlasSensor(name,port)])
+    add_devices([AtlasSensor(
+        name=config.get(CONF_NAME),
+        port=config.get(CONF_PORT),
+        offset=config.get(CONF_OFFSET)
+    )])
 
 class AtlasSensor(Entity):
     """Representation of a Sensor."""
 
-    def __init__(self, name, port):
+    def __init__(self, name, port, offset):
         """Initialize the sensor."""
         self.ser = serial.Serial(port, 9600, timeout=3, write_timeout=3)
         _LOGGER.info("Serial for Atlas EZO @%s = %s" % (port,self.ser))
         self._state = None
         self._name = name
+        self._offset = offset
         ezos = {"ph": ['ph', 'pH', 'mdi:alpha-h-circle'],
                "orp": ['orp', 'mV', 'mdi:alpha-r-circle'],
                "or": ['orp', 'mV', 'mdi:alpha-r-circle'],
@@ -104,24 +104,14 @@ class AtlasSensor(Entity):
 
     def update(self):
         """Fetch new state data for the sensor.
-        This is the only method that should fetch new data for Home Assistant.
         """
-        self._state = self._read()
-        _LOGGER.debug("update state = '%s'" % self._state)
-        return
-
-        self.ser.write("R\r".encode())
-        line = ""
-        while True:
-            data = self.ser.read().decode()
-            if(data == "\r"):
-                break
-            else:
-                line = line + data
         try:
-            self._state = float(line)
+            r = self._read()
+            self._state = float(r) + self._offset
+            _LOGGER.debug("update state = '%s'" % self._state)
         except:
-            _LOGGER.info("readed '%s'" % line)
+            _LOGGER.info("readed '%s'" % r)
+        return
 
     def __del__(self):
         """close the sensor."""
