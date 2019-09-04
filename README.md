@@ -5,9 +5,9 @@
 
 ## Overview:
 
-A cost-effective, easy-to-build, easy-to-use "Swimming-Pool Automation System" with top functions to automate, control and monitorize (from web) small-medium size swimming pools.
+ A cost-effective, easy-to-build, easy-to-use "Swimming-Pool Automation System" with top functions to automate, control and monitorize (from web) small-medium size swimming pools.
 
-- Filter control (fixed and dual-speed pump)
+- Automatic filter control (fixed and dual-speed pumps, 1 or 2 daily cycles) based on temperature.
 - 3 sensors:
   - water temperature (one-wire [DS18B20 waterprof](https://aliexpress.com/item/32968031204.html))
   - [ph](https://www.atlas-scientific.com/product_pages/circuits/ezo_ph.html) and [orp](https://www.atlas-scientific.com/product_pages/circuits/ezo_orp.html) with [EZO circuits](https://www.atlas-scientific.com/product_pages/components/ezo-carrier-board.html). A custom UART sensor for HA has been developed.
@@ -15,7 +15,7 @@ A cost-effective, easy-to-build, easy-to-use "Swimming-Pool Automation System" w
   - pump on/off and pump speed (high/low)
   - muriatic injection (to reduce pH) and bleach injection
  
- System is intended to automagically control basic functions and notification all possible events.
+ System is intended to monitoring and automagically control most important functions and notify to mobile all possible events.
  
  ## Build system:
  
@@ -31,7 +31,8 @@ A cost-effective, easy-to-build, easy-to-use "Swimming-Pool Automation System" w
  ## TODO:
  - External sensor to measure power consumption and [safe motor](https://en.wikipedia.org/wiki/Magnetic_starter) (probably based on sonoff POW)
  - Integrate [mega-io board](https://www.sequentmicrosystems.com/megaio.html) (relays and ACD with i2c control)
- - SWC – Salt Water Chlorinator 
+ - SWC – Salt Water Chlorinator
+ - Control Variable 
  
  
  
