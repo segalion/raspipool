@@ -35,6 +35,6 @@
  - Integrate [mega-io board](https://www.sequentmicrosystems.com/megaio.html) (relays and ACD with i2c control) instead of actual gpio-relay HATs
  
  ## Optional
- For pumps less <= 1.5 HP, a external sensor to measure power consumption and [safe motor](https://en.wikipedia.org/wiki/Magnetic_starter) (based on sonoff POW)
+ For pumps <= 1.5 HP, a external sensor to measure power consumption and [safe motor](https://en.wikipedia.org/wiki/Magnetic_starter) (based on sonoff POW)
  
  <sub>Thanks to Hidromaster, Piscidoc, and all DIY enthusiasts from [hablemosdepisicnas](http://www.hablemosdepiscinas.com/foro/viewtopic.php?f=11&t=3906) and [TFP](https://www.troublefreepool.com/threads/raspipool-pool-automation-system-with-raspberry-pi-home-assistant.188410/) forums.</sub>
