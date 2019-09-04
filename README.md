@@ -22,7 +22,7 @@
  Follow instructions in wiki [howto connect sensors](https://github.com/segalion/raspipool/wiki/Sensors-connection-(DS18B20,-and-EZO-pH-and-ORP)) and [howto connect pump relays](https://github.com/segalion/raspipool/wiki/Connection-of-relays-for-pump-control)
  
  ## Install
- 0. Install raspbian and Home Assistant ([prefered method](https://www.home-assistant.io/docs/installation/raspberry-pi/) as I use it now) (or HASS.IO)
+ 0. Install [raspbian](https://myhydropi.com/raspberry-pi-initial-setup) and [Home Assistant with this prefered method](https://www.home-assistant.io/docs/installation/raspberry-pi/)
  1. Just copy 'custom_components', 'packages' folders (with all paths and contents) and 'ui-lovelace.yaml' frontend file in homeassistant conf_dir ( i.e. /home/homeassistant/.homeassistant/ ).
  2. Modify your 'configuration.yaml' (including '  packages: !include_dir_named packages', disabling automations and discovery and lovelace in yaml mode) as example in code
  3. Create/modify proper 'secrets.yaml' for apis (latitude/longitude, pushbullet api, openweathermap api, etc).
