@@ -13,7 +13,7 @@
   - [ph](https://www.atlas-scientific.com/product_pages/circuits/ezo_ph.html) and [orp](https://www.atlas-scientific.com/product_pages/circuits/ezo_orp.html) with [EZO circuits](https://www.atlas-scientific.com/product_pages/components/ezo-carrier-board.html). A custom UART sensor for HA has been developed.
 - and minimun of [4 relays](https://aliexpress.com/item/32961638909.html) [or 6](https://aliexpress.com/item/32997012084.html) controlling :
   - pump on/off and pump speed (high/low)
-  - muriatic injection (to reduce pH) and bleach injection
+  - muriatic acid injection (to regulate pH) and bleach injection (to mantain sanitization level)
  
  System is intended to monitoring and automagically control most important functions and notify to mobile all possible events.
  
