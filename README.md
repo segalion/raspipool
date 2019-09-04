@@ -3,9 +3,9 @@
 
 <img src="/help/media/raspipool_main2.png" height="256">
 
-## Goal:
+## Overview:
 
-Build a cost-effective, easy-to-install, easy-to-use "Swimming-Pool Automation System" with basic functions for most of small-medium size pools.
+A cost-effective, easy-to-build, easy-to-use "Swimming-Pool Automation System" with top functions to automate, control and monitorize (from web) small-medium size swimming pools.
 
 - Filter control (fixed and dual-speed pump)
 - 3 sensors:
