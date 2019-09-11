@@ -19,12 +19,12 @@
  
  ## Build system:
  
- Follow instructions in wiki [howto connect sensors](https://github.com/segalion/raspipool/wiki/Sensors-connection-(DS18B20,-and-EZO-pH-and-ORP)) and [howto connect pump relays](https://github.com/segalion/raspipool/wiki/Connection-of-relays-for-pump-control)
+ Follow instructions in wiki [howto build a bypass to connect sensors to the pool](https://github.com/segalion/raspipool/wiki/Bypass-for-sensors), [howto connect sensors to the raspberry pi](https://github.com/segalion/raspipool/wiki/Sensors-connection-(DS18B20,-and-EZO-pH-and-ORP)) and [howto connect relays between pumps and raspberry pi](https://github.com/segalion/raspipool/wiki/Connection-of-relays-for-pump-control)
  
  ## Install
- 0. Install [hassbian](https://www.home-assistant.io/docs/installation/hassbian/installation/) (You can instead install [raspbian](https://myhydropi.com/raspberry-pi-initial-setup) + [Home Assistant with this prefered method](https://www.home-assistant.io/docs/installation/raspberry-pi/))
+ 0. Install [hassbian](https://www.home-assistant.io/docs/installation/hassbian/installation/) (If advanced user, you can instead install [raspbian](https://myhydropi.com/raspberry-pi-initial-setup) + [Home Assistant with this prefered method](https://www.home-assistant.io/docs/installation/raspberry-pi/))
  1. Just copy 'custom_components', 'packages' folders (with all paths and contents) and 'ui-lovelace.yaml' frontend file in homeassistant conf_dir ( i.e. /home/homeassistant/.homeassistant/ ).
- 2. Modify your 'configuration.yaml' (including '  packages: !include_dir_named packages', disabling automations and discovery and lovelace in yaml mode) as example in code
+ 2. Modify your 'configuration.yaml' (including '  packages: !include_dir_named packages', disabling automations, scripts and groups, discovery and lovelace in yaml mode) as example in code
  3. Create/modify proper 'secrets.yaml' for apis (latitude/longitude, pushbullet api, openweathermap api, etc).
  
  
