@@ -4,7 +4,7 @@ homeassistant:
   latitude: !secret latitude
   longitude: !secret longitude
   unit_system: metric
-  customize: !include customize.yaml
+  #customize: !include customize.yaml
   packages: !include_dir_named packages
 default_config:
 # Disable Discover some devices automatically
